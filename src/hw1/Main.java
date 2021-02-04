@@ -20,6 +20,27 @@ public class Main {
         String[] arr4 = new String[]{"1","2","3","4","5a"};
         List<String> list4 = arrayToList(arr4);
         System.out.println(list4);
+
+        Box box1 = new Box();
+        Box box2 = new Box();
+        Box box3 = new Box();
+
+        box1.addFruit(new Apple());
+        box1.addFruit(new Apple());
+        box1.addFruit(new Apple());
+        box2.addFruit(new Orange());
+        box2.addFruit(new Orange());
+
+        System.out.println(box1.getWeight());
+        System.out.println(box2.getWeight());
+        System.out.println(box3.getWeight());
+
+        System.out.println(box1.compare(box2));
+
+        box1.move(box2);
+        System.out.println(box1);
+        System.out.println(box2);
+
     }
 
     public static void swap(Object[] arr, int i, int j) {
