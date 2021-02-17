@@ -3,6 +3,8 @@ package hw5;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Car implements Runnable {
     private static int CARS_COUNT;
@@ -14,14 +16,15 @@ public class Car implements Runnable {
     private String name;
     private CountDownLatch ready;
     private CyclicBarrier start;
-    private CountDownLatch finish;
+    private CyclicBarrier finish;
+    Lock winner;
     public String getName() {
         return name;
     }
     public int getSpeed() {
         return speed;
     }
-    public Car(Race race, int speed, CountDownLatch ready, CyclicBarrier start, CountDownLatch finish) {
+    public Car(Race race, int speed, CountDownLatch ready, CyclicBarrier start, CyclicBarrier finish, Lock winner) {
         this.race = race;
         this.speed = speed;
         CARS_COUNT++;
@@ -29,6 +32,7 @@ public class Car implements Runnable {
         this.ready = ready;
         this.start = start;
         this.finish = finish;
+        this.winner = winner;
     }
     @Override
     public void run() {
@@ -50,6 +54,16 @@ public class Car implements Runnable {
         for (int i = 0; i < race.getStages().size(); i++) {
             race.getStages().get(i).go(this);
         }
-        finish.countDown();
+        try {
+            if(winner.tryLock()) {
+                System.out.println(name + " - WIN");
+                finish.await();
+                winner.unlock();
+            } else {
+                finish.await();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

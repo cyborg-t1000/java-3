@@ -14,10 +14,10 @@ public class MainClass {
             Car[] cars = new Car[CARS_COUNT];
             final CountDownLatch ready = new CountDownLatch(CARS_COUNT);
             final CyclicBarrier start = new CyclicBarrier(CARS_COUNT + 1);
-            final CountDownLatch finish = new CountDownLatch(CARS_COUNT);
+            final CyclicBarrier finish = new CyclicBarrier(CARS_COUNT + 1);
             final Lock winner = new ReentrantLock();
             for (int i = 0; i < cars.length; i++) {
-                cars[i] = new Car(race, 20 + (int) (Math.random() * 10), ready, start, finish);
+                cars[i] = new Car(race, 20 + (int) (Math.random() * 10), ready, start, finish, winner);
             }
 
             for (int i = 0; i < cars.length; i++) {
@@ -39,6 +39,8 @@ public class MainClass {
             try {
                 finish.await();
             } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (BrokenBarrierException e) {
                 e.printStackTrace();
             }
             System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка закончилась!!!");
